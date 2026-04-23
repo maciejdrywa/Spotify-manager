@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtGui import QIcon
 from ui.LoginView import LoginView
 from ui.HomeView import HomeView
 
@@ -7,6 +8,7 @@ class MainWindow(QMainWindow):
     def __init__(self, auth_service):
         super().__init__()
         self.setWindowTitle("Spotify downloader")
+        self.setWindowIcon(QIcon("assets/app_icon.png"))
         self.setFixedSize(860, 540)
 
         self.auth_service = auth_service
