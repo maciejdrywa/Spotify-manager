@@ -1,7 +1,7 @@
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from ui.MainWindow import MainWindow
-from services.auth_service import AuthService
+from ui.main_window import MainWindow
+from auth.auth_service import AuthService
 import sys
 
 
