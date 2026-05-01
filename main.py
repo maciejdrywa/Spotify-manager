@@ -1,15 +1,23 @@
-from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from ui.main_window import MainWindow
-from auth.auth_service import AuthService
 import sys
+from PyQt6.QtWidgets import QApplication
 
+from ui.main_window import MainWindow
+from services.auth_service import AuthService
+from controllers.app_controller import AppController
 
 
 def main():
+    # Create app
     app = QApplication(sys.argv)
+
+    # Init auth service and Main Window UI 
     auth_service = AuthService()
-    window = MainWindow(auth_service)
+    window = MainWindow()
+
+    # Manipulate state of the app
+    AppController(window, auth_service)
+
+    # Show window
     window.show()
     app.exec()
 
