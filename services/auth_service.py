@@ -99,6 +99,8 @@ class AuthService:
             response.raise_for_status()
             tokens = response.json()
 
+            print(tokens)
+
             # Save tokens and time in session
             self.session.set_session(
                 access_token=tokens["access_token"],
@@ -182,9 +184,14 @@ class AuthService:
         # Clear keyring storage and RAM session storage 
         self.session.clear()
         self.storage.clear()
+
+    def invalidate_session(self):
+        # Clear broken or outdated session without requiring UI logic
+        self.session.clear()
+        self.storage.clear()
         
         
-    def get_acces_token(self):
+    def get_access_token(self):
         # Return acces_token if it is avaliable
         if self.has_valid_token():
             return self.session.access_token
