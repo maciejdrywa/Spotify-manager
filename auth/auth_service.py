@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from auth.callback_server import run_server
 from models.session_model import SessionModel
-from storage.token_storage import TokenStorage
+from auth.token_storage import TokenStorage
 
 
 class AuthService:

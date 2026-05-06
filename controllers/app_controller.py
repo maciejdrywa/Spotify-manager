@@ -3,7 +3,7 @@ from PyQt6.QtCore import QTimer
 from ui.login_view import LoginView
 from ui.home_view import HomeView
 
-from controllers.login_controller import LoginController
+from auth.auth_controller import AuthController
 from controllers.home_controller import HomeController
 
 
@@ -12,6 +12,8 @@ class AppController:
         self.window = window
         self.auth_service = auth_service
         self.spotify_service = spotify_service
+        self.auth_controller = None
+        self.home_controller = None
 
         # Try to restore session
         self.auth_service.restore_session()
@@ -23,10 +25,11 @@ class AppController:
             self.show_login()
 
     def show_login(self):
+        self.teardown_home_controller()
         view = LoginView()
-        
-        # Connect Login controller
-        self.login_controller = LoginController(
+
+        # Connect auth controller
+        self.auth_controller = AuthController(
             view=view,
             auth_service=self.auth_service,
             on_success=self.show_home
@@ -35,6 +38,7 @@ class AppController:
         self.window.set_view(view)
 
     def show_home(self):
+        self.teardown_home_controller()
         view = HomeView()
 
         # Connect home controller
@@ -47,3 +51,10 @@ class AppController:
 
         self.window.set_view(view)
         QTimer.singleShot(0, self.home_controller.load_user_profile)
+
+    def teardown_home_controller(self):
+        if self.home_controller is None:
+            return
+
+        self.home_controller.deactivate()
+        self.home_controller = None

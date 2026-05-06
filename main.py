@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication
 
 from ui.main_window import MainWindow
 
-from services.auth_service import AuthService
+from auth.auth_service import AuthService
 from services.spotify_service import SpotifyService
 
 from controllers.app_controller import AppController
