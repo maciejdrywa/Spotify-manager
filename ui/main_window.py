@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Spotify downloader")
         self.setWindowIcon(QIcon("assets/app_icon.png"))
-        self.setFixedSize(860, 540)
+        self.setFixedSize(1150, 700)
 
     # Set central widget function
     def set_view(self, view):

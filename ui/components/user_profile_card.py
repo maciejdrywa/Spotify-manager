@@ -24,10 +24,10 @@ class UserProfileCard(QWidget):
         self.user_avatar.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.username_label = QLabel("Username")
-        self.username_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.username_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.email_label = QLabel("email@example.com")
-        self.email_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.email_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         username_and_email_layout.addWidget(self.username_label)
         username_and_email_layout.addWidget(self.email_label)

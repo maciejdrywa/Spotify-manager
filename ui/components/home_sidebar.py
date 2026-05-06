@@ -16,8 +16,11 @@ class HomeSidebar(QWidget):
         self.setFixedWidth(250)
 
         layout = QVBoxLayout(self)
+        layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        layout.setContentsMargins(24, 24, 24, 24)
 
         logo = QLabel("Spotify Downloader")
+        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         btn_home = self.create_nav_button("Home")
         btn_download = self.create_nav_button("Download")
@@ -27,17 +30,18 @@ class HomeSidebar(QWidget):
 
         self.profile_card = UserProfileCard()
 
-        layout.addWidget(logo)
-        layout.addWidget(btn_home)
-        layout.addWidget(btn_download)
-        layout.addWidget(btn_settings)
+        layout.addWidget(logo, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(btn_home, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(btn_download, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(btn_settings, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addStretch()
-        layout.addWidget(self.profile_card)
-        layout.addWidget(btn_logout)
+        layout.addWidget(self.profile_card, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(btn_logout, alignment=Qt.AlignmentFlag.AlignHCenter)
 
     def create_nav_button(self, text):
         button = QPushButton(text)
         button.setCursor(Qt.CursorShape.PointingHandCursor)
+        button.setFixedWidth(180)
         return button
 
     def set_user_profile(

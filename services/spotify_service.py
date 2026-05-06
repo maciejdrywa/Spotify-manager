@@ -10,6 +10,23 @@ class SpotifyService:
         self.auth_service = auth_service
 
 
+    def get_image_data(self, image_url):
+        if not image_url:
+            return None
+
+        try:
+            # Try download onfo about user image
+            response = requests.get(
+                image_url,
+                timeout=10
+            )
+            response.raise_for_status()
+            return response.content
+        except requests.RequestException as e:
+            print(f"Get image error: {e}")
+            return None
+
+
     def get_current_user(self):
         # Get acces token
         access_token = self.auth_service.get_access_token()
@@ -36,21 +53,36 @@ class SpotifyService:
             raise
 
 
-    def get_image_data(self, image_url):
-        if not image_url:
-            return None
+    def get_user_playlists(self):
+        # Get acces token
+        access_token = self.auth_service.get_access_token()
+
+        # Create headers
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
 
         try:
-            # Try download onfo about user image
+            # Make request
             response = requests.get(
-                image_url,
+                "https://api.spotify.com/v1/me/playlists",
+                headers=headers,
                 timeout=10
             )
+
+            # Get response
             response.raise_for_status()
-            return response.content
+
+            return response.json()
         except requests.RequestException as e:
-            print(f"Get image error: {e}")
-            return None
+            print(f"Get user error: {e}")
+            raise
+
+    def get_user_playlist(self):
+        return self.get_user_playlists()
+
+
+    
 
 
 

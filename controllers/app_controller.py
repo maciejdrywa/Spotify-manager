@@ -50,7 +50,7 @@ class AppController:
         )
 
         self.window.set_view(view)
-        QTimer.singleShot(0, self.home_controller.load_user_profile)
+        QTimer.singleShot(0, self.home_controller.load_home_data)
 
     def teardown_home_controller(self):
         if self.home_controller is None:
