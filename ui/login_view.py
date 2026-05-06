@@ -1,14 +1,8 @@
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtWidgets import (
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QPushButton,
-    QSizePolicy,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+
+from ui.components.login_auth_panel import LoginAuthPanel
+from ui.components.login_hero_panel import LoginHeroPanel
 
 
 class LoginView(QWidget):
@@ -96,97 +90,12 @@ class LoginView(QWidget):
         content_row = QHBoxLayout()
         content_row.setSpacing(22)
 
-        hero_panel = QFrame()
-        hero_panel.setObjectName("heroPanel")
-        hero_panel.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-        hero_layout = QVBoxLayout(hero_panel)
-        hero_layout.setContentsMargins(34, 34, 34, 34)
-        hero_layout.setSpacing(16)
-
-        logo_label = QLabel()
-        logo_pixmap = QPixmap("assets/spotify_logo.png")
-        logo_label.setPixmap(
-            logo_pixmap.scaled(
-                180,
-                54,
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation,
-            )
-        )
-
-        eyebrow = QLabel("SPOTIFY DOWNLOADER")
-        eyebrow.setObjectName("eyebrow")
-
-        title = QLabel("Zaloguj się do Spotify")
-        title.setObjectName("title")
-        title.setWordWrap(True)
-
-        subtitle = QLabel(
-            "Połącz konto Spotify, aby przejść dalej i pobierać utwory w prostym, "
-            "czytelnym interfejsie bez zbędnych kroków."
-        )
-        subtitle.setObjectName("subtitle")
-        subtitle.setWordWrap(True)
-
-        chips_row = QHBoxLayout()
-        chips_row.setSpacing(10)
-        for text in ("Autoryzacja", "Bezpieczne logowanie", "Kilka sekund"):
-            chip = QLabel(text)
-            chip.setObjectName("chip")
-            chips_row.addWidget(chip)
-        chips_row.addStretch()
-
-        hero_layout.addWidget(logo_label)
-        hero_layout.addSpacing(10)
-        hero_layout.addWidget(eyebrow)
-        hero_layout.addWidget(title)
-        hero_layout.addWidget(subtitle)
-        hero_layout.addStretch()
-        hero_layout.addLayout(chips_row)
-
-        right_pane = QWidget()
-        right_pane.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-        right_layout = QVBoxLayout(right_pane)
-        right_layout.setContentsMargins(10, 10, 10, 10)
-        right_layout.setSpacing(18)
-
-        auth_title = QLabel("Zaloguj się")
-        auth_title.setObjectName("authTitle")
-
-        auth_text = QLabel(
-            "Kliknięcie otworzy przeglądarkę i rozpocznie autoryzację Twojego konta Spotify."
-        )
-        auth_text.setObjectName("authText")
-        auth_text.setWordWrap(True)
-
-        self.button = QPushButton("Kontynuuj ze Spotify")
-        self.button.setObjectName("loginButton")
-        self.button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.button.setMinimumHeight(48)
-        self.button.setMaximumWidth(340)
-        self.button.clicked.connect(self.on_login_clicked)
-
-        button_font = QFont()
-        button_font.setPointSize(10)
-        button_font.setBold(True)
-        self.button.setFont(button_font)
-
-        footnote = QLabel("Po udanym logowaniu aplikacja przejdzie dalej automatycznie.")
-        footnote.setObjectName("footnote")
-        footnote.setWordWrap(True)
-
-        right_layout.addStretch()
-        right_layout.addWidget(auth_title)
-        right_layout.addWidget(auth_text)
-        right_layout.addSpacing(12)
-        right_layout.addWidget(self.button)
-        right_layout.addWidget(footnote)
-        right_layout.addStretch()
+        hero_panel = LoginHeroPanel()
+        auth_panel = LoginAuthPanel()
+        auth_panel.login_clicked.connect(self.on_login_clicked)
 
         content_row.addWidget(hero_panel, 7)
-        content_row.addWidget(right_pane, 4)
+        content_row.addWidget(auth_panel, 4)
 
         outer_layout.addLayout(content_row)
         self.setLayout(outer_layout)
