@@ -8,36 +8,54 @@ class AppController:
         self.window = window
         self.auth_service = auth_service
         self.spotify_service = spotify_service
-        self.auth_controller = None
-        self.home_controller = None
+
+
+        # Create Autho Controller
+        self.auth_controller = AuthController(
+            view=window,
+            auth_service=auth_service,
+            on_success=self.on_login_success,
+            on_logout=self.on_logout_success
+        )
 
         # Try to restore session
         self.auth_service.restore_session()
 
-        # Set menu enabled functions 
-        if self.auth_service.has_valid_token():
-            # Account menu
-            window.login_action.setEnabled(False)
-            window.logout_action.setEnabled(True)
-            window.profile_action.setEnabled(True)
-            window.refresh_action.setEnabled(True)
+        # Connect menu actions
+        self._connect_menu_actions()
 
-            # Spotify menu
-            window.spotify_menu.setEnabled(True)
+        # Update menu state
+        self._update_menu_state()
 
-            # Download menu
-            window.download_menu.setEnabled(True)
-        else:
-            # Account menu
-            window.login_action.setEnabled(True)
-            window.logout_action.setEnabled(False)
-            window.profile_action.setEnabled(False)
-            window.refresh_action.setEnabled(False)
 
-            # Spotify menu
-            window.spotify_menu.setEnabled(False)
 
-            # Download menu
-            window.download_menu.setEnabled(False)
-
+    def _connect_menu_actions(self):
+        # Login action
+        self.window.login_action.triggered.connect(self.auth_controller.login)
+        #Logout action
+        self.window.logout_action.triggered.connect(self.auth_controller.logout)
+        # Exit action
+        self.window.exit_action.triggered.connect(self.window.close)
         
+
+    def on_login_success(self):
+        self._update_menu_state()
+
+    def on_logout_success(self):
+        self._update_menu_state()
+
+    def _update_menu_state(self):
+        if self.auth_service.has_valid_token():
+            self.window.login_action.setEnabled(False)
+            self.window.logout_action.setEnabled(True)
+            self.window.profile_action.setEnabled(True)
+            self.window.refresh_action.setEnabled(True)
+            self.window.spotify_menu.setEnabled(True)
+            self.window.download_menu.setEnabled(True)
+        else:
+            self.window.login_action.setEnabled(True)
+            self.window.logout_action.setEnabled(False)
+            self.window.profile_action.setEnabled(False)
+            self.window.refresh_action.setEnabled(False)
+            self.window.spotify_menu.setEnabled(False)
+            self.window.download_menu.setEnabled(False)
