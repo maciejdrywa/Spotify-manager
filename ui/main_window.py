@@ -1,5 +1,9 @@
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QIcon, QAction
+from PyQt6.QtWidgets import ( QWidget, QVBoxLayout,
+    QTreeWidget, QTreeWidgetItem, QPushButton
+)
+from PyQt6.QtCore import Qt
 
 
 class MainWindow(QMainWindow):
@@ -7,7 +11,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Spotify downloader")
         self.setWindowIcon(QIcon("assets/app_icon.png"))
-        self.setFixedSize(1150, 700)
+        self.setMinimumSize(1000, 500)
 
         # Create menu bar
         self.menu = self.menuBar()
@@ -62,6 +66,74 @@ class MainWindow(QMainWindow):
 
         self.help_menu.addAction(self.about_action)
         self.help_menu.addAction(self.github_action)
+
+        central_widget = QWidget()
+        layout = QVBoxLayout(central_widget)
+
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabels(["Title", "Artist", "Duration"])
+        self.tree.setColumnWidth(0, 400)
+        self.tree.setColumnWidth(1, 250)
+        self.tree.setColumnWidth(2, 200)
+
+        layout.addWidget(self.tree)
+
+        self.download_button = QPushButton("Download selected")
+
+        layout.addWidget(self.download_button)
+
+        self.setCentralWidget(central_widget)
+
+        self.load_playlists()
+
+    def load_playlists(self):
+        playlists = [
+            {
+                "name": "Trening",
+                "tracks": [
+                    {"title": "Song A", "artist": "Artist 1", "duration": "3:20"},
+                    {"title": "Song B", "artist": "Artist 2", "duration": "4:10"},
+                ]
+            },
+            {
+                "name": "Chill",
+                "tracks": [
+                    {"title": "Song C", "artist": "Artist 3", "duration": "2:55"},
+                    {"title": "Song D", "artist": "Artist 4", "duration": "3:45"},
+                ]
+            }
+        ]
+
+        self.tree.clear()
+
+        for playlist in playlists:
+            playlist_item = QTreeWidgetItem(self.tree)
+            playlist_item.setText(0, playlist["name"])
+            playlist_item.setText(1, "Playlist")
+            playlist_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+            playlist_item.setData(0, Qt.ItemDataRole.UserRole, {
+                "type": "playlist",
+                "name": playlist["name"]
+            })
+
+            for track in playlist["tracks"]:
+                track_item = QTreeWidgetItem(playlist_item)
+                track_item.setText(0, track["title"])
+                track_item.setText(1, track["artist"])
+                track_item.setText(2, track["duration"])
+                track_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+                track_item.setData(0, Qt.ItemDataRole.UserRole, {
+                    "type": "track",
+                    "title": track["title"],
+                    "artist": track["artist"],
+                    "duration": track["duration"],
+                    "playlist": playlist["name"]
+                })
+
+        self.tree.expandAll()
+
 
 
 
