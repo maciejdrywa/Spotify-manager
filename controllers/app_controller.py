@@ -1,22 +1,32 @@
 from PyQt6.QtCore import QTimer
 
 from auth.auth_controller import AuthController
+from controllers.playlist_controller import PlaylistController
+
+
+from auth.auth_service import AuthService
+
+from services.spotify_service import SpotifyService
 
 
 class AppController:
-    def __init__(self, window, auth_service, spotify_service):
+    def __init__(self, window):
         self.window = window
-        self.auth_service = auth_service
-        self.spotify_service = spotify_service
-
+        self.auth_service = AuthService()
+        self.spotify_service = SpotifyService(
+            auth_service=self.auth_service
+        )
 
         # Create Autho Controller
         self.auth_controller = AuthController(
             view=window,
-            auth_service=auth_service,
+            auth_service=self.auth_service,
             on_success=self.on_login_success,
             on_logout=self.on_logout_success
         )
+        self.playlist_controller = PlaylistController(
+            spotify_service=self.spotify_service
+            )
 
         # Try to restore session
         self.auth_service.restore_session()
@@ -36,6 +46,10 @@ class AppController:
         self.window.logout_action.triggered.connect(self.auth_controller.logout)
         # Exit action
         self.window.exit_action.triggered.connect(self.window.close)
+        # Playlists action
+        self.window.playlists_action.triggered.connect(
+            self.playlist_controller.print_user_playlists
+        )
         
 
     def on_login_success(self):

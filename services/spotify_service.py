@@ -6,80 +6,51 @@ class SpotifyAuthError(Exception):
 
 
 class SpotifyService:
+    API_BASE_URL = "https://api.spotify.com/v1"
+
     def __init__(self, auth_service):
         self.auth_service = auth_service
 
-
-    def get_image_data(self, image_url):
-        if not image_url:
-            return None
-
-        try:
-            # Try download onfo about user image
-            response = requests.get(
-                image_url,
-                timeout=10
-            )
-            response.raise_for_status()
-            return response.content
-        except requests.RequestException as e:
-            print(f"Get image error: {e}")
-            return None
-
-
-    def get_current_user(self):
-        # Get acces token
+    def _get_api(self, endpoint):
         access_token = self.auth_service.get_access_token()
-
-        # Create headers
         headers = {
             "Authorization": f"Bearer {access_token}"
         }
+        url = f"{self.API_BASE_URL}/{endpoint.lstrip('/')}"
 
         try:
-            # Make request
             response = requests.get(
-                "https://api.spotify.com/v1/me",
+                url,
                 headers=headers,
                 timeout=10
             )
-
-            # Get response
             response.raise_for_status()
-
             return response.json()
         except requests.RequestException as e:
-            print(f"Get user error: {e}")
+            print(f"Spotify API error for '{endpoint}': {e}")
+            if getattr(e, "response", None) is not None:
+                print(f"Spotify API response: {e.response.text}")
             raise
+
 
 
     def get_user_playlists(self):
-        # Get acces token
-        access_token = self.auth_service.get_access_token()
+        data = self._get_api("/me/playlists")
 
-        # Create headers
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        playlists = []
 
-        try:
-            # Make request
-            response = requests.get(
-                "https://api.spotify.com/v1/me/playlists",
-                headers=headers,
-                timeout=10
-            )
+        items = data.get("items", [])
 
-            # Get response
-            response.raise_for_status()
+        for item in items:
+            playlist = {
+                "id": item.get("id"),
+                "name": item.get("name"),
+                "total_tracks": item.get("tracks", {}).get("total", 0),
+            }
 
-            return response.json()
-        except requests.RequestException as e:
-            print(f"Get user error: {e}")
-            raise
+            playlists.append(playlist)
 
-    def get_user_playlist(self):
-        return self.get_user_playlists()
+        return playlists
 
 
     
