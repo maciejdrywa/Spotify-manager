@@ -28,10 +28,7 @@ class SpotifyService:
             return response.json()
         except requests.RequestException as e:
             print(f"Spotify API error for '{endpoint}': {e}")
-            if getattr(e, "response", None) is not None:
-                print(f"Spotify API response: {e.response.text}")
             raise
-
 
 
     def get_user_playlists(self):
@@ -42,15 +39,53 @@ class SpotifyService:
         items = data.get("items", [])
 
         for item in items:
+            id = item.get("id")
+            name = item.get("name")
+
+            tracks = self.get_playlist_tracks(id)
+
             playlist = {
-                "id": item.get("id"),
-                "name": item.get("name"),
-                "total_tracks": item.get("tracks", {}).get("total", 0),
+                "id": id,
+                "name": name,
+                "tracks": tracks,
             }
 
             playlists.append(playlist)
 
         return playlists
+    
+
+    def get_playlist_tracks(self, playlist_id):
+        data = self._get_api(f"/playlists/{playlist_id}/items")
+
+        tracks = []
+
+        items = data.get("items", [])
+
+        for item in items:
+            id = item.get("item", {}).get("id", "")
+            name = item.get("item", {}).get("name", "")
+
+            artists = item.get("item", {}).get("artists", [])
+            artist = artists[0].get("name", "")
+
+            duration_ms = int(item.get("item", {}).get("duration_ms", ""))
+            duration_minutes = (duration_ms / 1000) // 60
+            duration_seconds = (duration_ms / 1000) % 60
+            duration = f"duration_minutes:duration"
+
+            track = {
+                "id": id,
+                "name": name,
+                "artist": artist,
+                "duration": duration
+            }
+
+            tracks.append(track)
+
+        return tracks
+
+
 
 
     
