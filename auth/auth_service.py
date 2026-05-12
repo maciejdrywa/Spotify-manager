@@ -92,7 +92,7 @@ class AuthService:
             response = requests.post(
                 token_url,
                 data=data,
-                timeout=10
+                timeout=120
             )
 
             # Get respose 
@@ -130,7 +130,7 @@ class AuthService:
             response = requests.post(
                 token_url,
                 data=data,
-                timeout=10
+                timeout=120
             )
 
             # Get response

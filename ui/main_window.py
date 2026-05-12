@@ -84,26 +84,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-        self.load_playlists()
-
-    def load_playlists(self):
-        playlists = [
-            {
-                "name": "Trening",
-                "tracks": [
-                    {"title": "Song A", "artist": "Artist 1", "duration": "3:20"},
-                    {"title": "Song B", "artist": "Artist 2", "duration": "4:10"},
-                ]
-            },
-            {
-                "name": "Chill",
-                "tracks": [
-                    {"title": "Song C", "artist": "Artist 3", "duration": "2:55"},
-                    {"title": "Song D", "artist": "Artist 4", "duration": "3:45"},
-                ]
-            }
-        ]
-
+    def load_playlists(self, playlists):
         self.tree.clear()
 
         for playlist in playlists:

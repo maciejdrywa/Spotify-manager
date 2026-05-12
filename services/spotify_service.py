@@ -64,19 +64,22 @@ class SpotifyService:
 
         for item in items:
             id = item.get("item", {}).get("id", "")
-            name = item.get("item", {}).get("name", "")
+            title = item.get("item", {}).get("name", "")
 
             artists = item.get("item", {}).get("artists", [])
-            artist = artists[0].get("name", "")
+            artist = artists[0].get("name", "") if artists else ""
 
-            duration_ms = int(item.get("item", {}).get("duration_ms", ""))
-            duration_minutes = (duration_ms / 1000) // 60
-            duration_seconds = (duration_ms / 1000) % 60
-            duration = f"duration_minutes:duration"
+            duration_ms = int(item.get("item", {}).get("duration_ms", 0))
+
+            total_seconds = duration_ms // 1000
+            duration_minutes = total_seconds // 60
+            duration_seconds = total_seconds % 60
+
+            duration = f"{duration_minutes}:{duration_seconds:02d}"
 
             track = {
                 "id": id,
-                "name": name,
+                "title": title,
                 "artist": artist,
                 "duration": duration
             }

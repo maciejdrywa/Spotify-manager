@@ -25,6 +25,7 @@ class AppController:
             on_logout=self.on_logout_success
         )
         self.playlist_controller = PlaylistController(
+            view=window,
             spotify_service=self.spotify_service
             )
 
