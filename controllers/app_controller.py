@@ -1,12 +1,12 @@
-from PyQt6.QtCore import QTimer
-
 from auth.auth_controller import AuthController
-from controllers.playlist_controller import PlaylistController
+from controllers.spotify_controller import SpotifyController
 
 
 from auth.auth_service import AuthService
 
 from services.spotify_service import SpotifyService
+
+import webbrowser
 
 
 class AppController:
@@ -24,7 +24,7 @@ class AppController:
             on_success=self.on_login_success,
             on_logout=self.on_logout_success
         )
-        self.playlist_controller = PlaylistController(
+        self.spotify_controller = SpotifyController(
             view=window,
             spotify_service=self.spotify_service
             )
@@ -41,23 +41,25 @@ class AppController:
 
 
     def _connect_menu_actions(self):
+        ## File menu
+        # Exit action
+        self.window.exit_action.triggered.connect(self.window.close)
+
+        ## Account menu
         # Login action
         self.window.login_action.triggered.connect(self.auth_controller.login)
         #Logout action
         self.window.logout_action.triggered.connect(self.auth_controller.logout)
-        # Exit action
-        self.window.exit_action.triggered.connect(self.window.close)
+
+        ## Spotify menu
         # Playlists action
-        self.window.playlists_action.triggered.connect(
-            self.playlist_controller.print_user_playlists
-        )
-        
+        self.window.playlists_action.triggered.connect(self.spotify_controller.load_my_playlists)
 
-    def on_login_success(self):
-        self._update_menu_state()
+        ## Download menu
 
-    def on_logout_success(self):
-        self._update_menu_state()
+        ## Help menu
+        # Github action
+        self.window.github_action.triggered.connect(self.open_github_page)
 
     def _update_menu_state(self):
         if self.auth_service.has_valid_token():
@@ -74,3 +76,15 @@ class AppController:
             self.window.refresh_action.setEnabled(False)
             self.window.spotify_menu.setEnabled(False)
             self.window.download_menu.setEnabled(False)
+        
+
+    def on_login_success(self):
+        self._update_menu_state()
+
+    def on_logout_success(self):
+        self._update_menu_state()
+
+    def open_github_page(self):
+        webbrowser.open("https://github.com/1maciek90/Spotify-downloader")
+
+    

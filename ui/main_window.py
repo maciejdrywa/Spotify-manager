@@ -39,15 +39,13 @@ class MainWindow(QMainWindow):
 
         # Spotify menu
         self.spotify_menu = self.menu.addMenu("Spotify")
-        self.playlists_action = QAction("My playlists", self)
-        self.liked_action = QAction("Liked Songs", self)
+        self.playlists_action = QAction("Load playlists", self)
+        self.liked_action = QAction("Load liked songs", self)
         self.search_playlist_url_action = QAction("Search playlist by URL", self)
-        self.load_playlists_action = QAction("Load playlist", self)
 
         self.spotify_menu.addAction(self.playlists_action)
         self.spotify_menu.addAction(self.liked_action)
         self.spotify_menu.addAction(self.search_playlist_url_action)
-        self.spotify_menu.addAction(self.load_playlists_action)
 
         # Download menu
         self.download_menu = self.menu.addMenu("Download")
@@ -61,10 +59,8 @@ class MainWindow(QMainWindow):
 
         # Help menu
         self.help_menu = self.menu.addMenu("Help")
-        self.about_action = QAction("About", self)
         self.github_action = QAction("GitHub / Documentation", self)
 
-        self.help_menu.addAction(self.about_action)
         self.help_menu.addAction(self.github_action)
 
         central_widget = QWidget()
@@ -84,7 +80,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-    def load_playlists(self, playlists):
+    def show_playlists(self, playlists):
         self.tree.clear()
 
         for playlist in playlists:
