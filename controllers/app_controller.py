@@ -55,6 +55,9 @@ class AppController:
         # Playlists action
         self.window.playlists_action.triggered.connect(self.spotify_controller.load_my_playlists)
 
+        # Liked tracks
+        self.window.liked_action.triggered.connect(self.spotify_controller.load_my_liked_tracks)
+
         ## Download menu
 
         ## Help menu

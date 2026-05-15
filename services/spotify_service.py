@@ -30,11 +30,29 @@ class SpotifyService:
             print(f"Spotify API error for '{endpoint}': {e}")
             raise
 
+    def _convert_duration(self, duration_ms):
+        total_seconds = duration_ms // 1000
+        duration_minutes = total_seconds // 60
+        duration_seconds = total_seconds % 60
+
+        duration = f"{duration_minutes}:{duration_seconds:02d}"
+        return duration
+    
+    def _convert_artists(self, artists):
+        result = ", ".join(
+            artist.get("name", "")
+            for artist in artists
+            if artist.get("name")
+        )
+        return result
+            
+
 
     def get_user_playlists(self):
         data = self._get_api("/me/playlists")
 
         playlists = []
+        
 
         items = data.get("items", [])
 
@@ -47,7 +65,7 @@ class SpotifyService:
             playlist = {
                 "id": id,
                 "name": name,
-                "tracks": tracks,
+                "tracks": tracks
             }
 
             playlists.append(playlist)
@@ -67,15 +85,10 @@ class SpotifyService:
             title = item.get("item", {}).get("name", "")
 
             artists = item.get("item", {}).get("artists", [])
-            artist = artists[0].get("name", "") if artists else ""
+            artist = self._convert_artists(artists)
 
             duration_ms = int(item.get("item", {}).get("duration_ms", 0))
-
-            total_seconds = duration_ms // 1000
-            duration_minutes = total_seconds // 60
-            duration_seconds = total_seconds % 60
-
-            duration = f"{duration_minutes}:{duration_seconds:02d}"
+            duration = self._convert_duration(duration_ms)
 
             track = {
                 "id": id,
@@ -87,7 +100,52 @@ class SpotifyService:
             tracks.append(track)
 
         return tracks
+    
 
+    def get_user_liked_songs(self):
+        limit = 50
+        offset = 0
+        tracks = []
+
+        while True:
+            data = self._get_api(f"me/tracks?limit={limit}&offset={offset}")
+
+            items = data.get("items", [])
+
+            if not items:
+                break
+
+            for item in items:
+                track_data = item.get("track", {})
+
+                id = track_data.get("id", "")
+                title = track_data.get("name", "")
+
+                artists = track_data.get("artists", [])
+                artist = self._convert_artists(artists)
+
+                duration_ms = int(track_data.get("duration_ms", 0))
+                duration = self._convert_duration(duration_ms)
+
+                track = {
+                    "id": id,
+                    "title": title,
+                    "artist": artist,
+                    "duration": duration 
+                }
+
+                tracks.append(track)
+
+            if data.get("next") is None:
+                break
+
+            offset += limit
+
+        return tracks
+
+            
+
+            
 
 
 

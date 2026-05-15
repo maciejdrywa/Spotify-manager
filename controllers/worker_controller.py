@@ -1,14 +1,13 @@
 from PyQt6.QtCore import QThread, QObject
 
-class WorkerController(QObject):
+
+class BaseWorkerController(QObject):
     def __init__(self):
         super().__init__()
-
         self._active_tasks = []
 
-
     def _start_worker(self, worker, on_finished, on_error=None):
-        thread = QThread()
+        thread = QThread(self)
 
         worker.moveToThread(thread)
 
@@ -35,13 +34,13 @@ class WorkerController(QObject):
 
         self._active_tasks.append(task)
 
-        thread.finished.connect(lambda: self._active_tasks.remove(task))
+        thread.finished.connect(lambda: self._remove_task(task))
 
         thread.start()
 
-        
+    def _remove_task(self, task):
+        if task in self._active_tasks:
+            self._active_tasks.remove(task)
+
     def _on_worker_error(self, message):
         print(f"Worker error: {message}")
-
-
-        

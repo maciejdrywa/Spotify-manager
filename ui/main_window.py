@@ -74,10 +74,6 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.tree)
 
-        self.download_button = QPushButton("Download selected")
-
-        layout.addWidget(self.download_button)
-
         self.setCentralWidget(central_widget)
 
     def show_playlists(self, playlists):
@@ -108,6 +104,23 @@ class MainWindow(QMainWindow):
                     "duration": track["duration"],
                     "playlist": playlist["name"]
                 })
+
+    def show_liked_tracks(self, tracks):
+        self.tree.clear()
+
+        for track in tracks:
+            playlist_item = QTreeWidgetItem(self.tree)
+            playlist_item.setText(0, track["title"])
+            playlist_item.setText(1, track["artist"])
+            playlist_item.setText(2, track["duration"])
+            playlist_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+            playlist_item.setData(0, Qt.ItemDataRole.UserRole, {
+                "type": "track",
+                "title": track["title"],
+                "artist": track["artist"],
+                "duration": track["duration"]
+            })
 
         self.tree.expandAll()
 

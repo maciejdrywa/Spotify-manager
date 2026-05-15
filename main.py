@@ -16,7 +16,7 @@ def main():
     window = MainWindow()
 
     # Manipulate state of the app
-    AppController(window)
+    window.app_controller = AppController(window)
 
     # Show window
     window.show()
