@@ -57,14 +57,15 @@ class SpotifyService:
         items = data.get("items", [])
 
         for item in items:
-            id = item.get("id")
-            name = item.get("name")
-
+            id = item.get("id", "")
+            name = item.get("name", "")
+            owner = item.get("owner", {}).get("display_name", "")
             tracks = self.get_playlist_tracks(id)
 
             playlist = {
                 "id": id,
                 "name": name,
+                "owner": owner,
                 "tracks": tracks
             }
 

@@ -82,7 +82,7 @@ class MainWindow(QMainWindow):
         for playlist in playlists:
             playlist_item = QTreeWidgetItem(self.tree)
             playlist_item.setText(0, playlist["name"])
-            playlist_item.setText(1, "Playlist")
+            playlist_item.setText(1, playlist["owner"])
             playlist_item.setCheckState(0, Qt.CheckState.Unchecked)
 
             playlist_item.setData(0, Qt.ItemDataRole.UserRole, {
