@@ -1,52 +1,12 @@
-from PyQt6.QtCore import QThread
+from controllers.worker_controller import WorkerController
 from workers.load_playlist_worker import LoadPlaylistWorker
 
-class SpotifyController:
+class SpotifyController(WorkerController):
     def __init__(self, view, spotify_service):
+        super().__init__()
+
         self.view = view
         self.spotify_service = spotify_service
-
-        self._active_tasks = []
-
-    def _start_worker(self, worker, on_finished, on_error=None):
-        thread = QThread()
-
-        worker.moveToThread(thread)
-
-        thread.started.connect(worker.run)
-
-        worker.finished.connect(on_finished)
-
-        if on_error is None:
-            worker.error.connect(self._on_spotify_error)
-        else:
-            worker.error.connect(on_error)
-
-        worker.finished.connect(thread.quit)
-        worker.error.connect(thread.quit)
-
-        worker.finished.connect(worker.deleteLater)
-        worker.error.connect(worker.deleteLater)
-        thread.finished.connect(thread.deleteLater)
-
-        task = {
-            "thread": thread,
-            "worker": worker
-        }
-
-        self._active_tasks.append(task)
-
-        thread.finished.connect(lambda: self._active_tasks.remove(task))
-
-        thread.start()
-
-        
-    def _cleanup_thread(self):
-        self.thread = None
-        self.worker = None
-
-    def _on_spotify_error(self, message):
-        print(f"Spotify controller error: {message}")
 
     def load_my_playlists(self):
         worker = LoadPlaylistWorker(
