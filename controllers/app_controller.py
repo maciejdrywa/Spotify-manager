@@ -50,6 +50,8 @@ class AppController:
         self.window.login_action.triggered.connect(self.auth_controller.login)
         #Logout action
         self.window.logout_action.triggered.connect(self.auth_controller.logout)
+        # Profile
+        self.window.profile_action.triggered.connect(self.spotify_controller.print_tracks)
 
         ## Spotify menu
         # Playlists action
