@@ -11,7 +11,7 @@ class SpotifyController(BaseWorkerController):
 
 
     def print_tracks(self):
-        print(self.view.get_checked_rows())
+        print(self.view.tracks_table.get_checked_rows())
         
         
     # Download playlist
@@ -27,7 +27,7 @@ class SpotifyController(BaseWorkerController):
         )
 
     def on_playlists_loaded(self, playlists):
-        self.view.show_playlists(playlists)
+        self.view.tracks_table.show_playlists(playlists)
 
     # Download liked tracks
     def load_my_liked_tracks(self):
@@ -42,7 +42,7 @@ class SpotifyController(BaseWorkerController):
 
 
     def on_liked_tracks_loaded(self, tracks):
-        self.view.show_liked_tracks(tracks)
+        self.view.tracks_table.show_liked_tracks(tracks)
 
 
 
