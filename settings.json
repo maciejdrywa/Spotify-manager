@@ -1,0 +1,9 @@
+{
+	"audio_format": "m4a",
+	"download_path": "downloads",
+	"use_browser_cookies": false,
+	"cookies_browser": "chrome",
+	"ffmpeg_location": "ffmpeg/bin",
+	"sleep_interval": 5,
+	"max_sleep_interval": 15
+}

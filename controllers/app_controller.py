@@ -6,6 +6,7 @@ from auth.auth_service import AuthService
 
 from services.spotify_service import SpotifyService
 from services.download_service import DownloadService
+from services.settings_service import SettingsService
 
 import webbrowser
 
@@ -13,9 +14,22 @@ import webbrowser
 class AppController:
     def __init__(self, window):
         self.window = window
+
+        # Services
         self.auth_service = AuthService()
-        
-        # Create Autho Controller
+
+        self.spotify_service = SpotifyService(
+            auth_service=self.auth_service
+        )
+
+        self.settings_service = SettingsService()
+        self.settings = self.settings_service.load()
+
+        self.download_service = DownloadService(
+            settings=self.settings
+        )
+
+        # Controllers
         self.auth_controller = AuthController(
             view=window,
             auth_service=self.auth_service,
@@ -23,23 +37,17 @@ class AppController:
             on_logout=self.on_logout_success
         )
 
-        self.spotify_service = SpotifyService(
-            auth_service=self.auth_service
-        )
-
         self.spotify_controller = SpotifyController(
             view=window,
             spotify_service=self.spotify_service
-            )
-        
-        self.download_service = DownloadService()
+        )
 
         self.download_controller = DownloadController(
             view=window,
             download_service=self.download_service
         )
 
-        # Try to restore session
+        # Restore session
         self.auth_service.restore_session()
 
         # Connect menu actions
