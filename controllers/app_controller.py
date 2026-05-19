@@ -1,10 +1,11 @@
 from auth.auth_controller import AuthController
 from controllers.spotify_controller import SpotifyController
-
+from controllers.download_controller import DownloadController
 
 from auth.auth_service import AuthService
 
 from services.spotify_service import SpotifyService
+from services.download_service import DownloadService
 
 import webbrowser
 
@@ -13,10 +14,7 @@ class AppController:
     def __init__(self, window):
         self.window = window
         self.auth_service = AuthService()
-        self.spotify_service = SpotifyService(
-            auth_service=self.auth_service
-        )
-
+        
         # Create Autho Controller
         self.auth_controller = AuthController(
             view=window,
@@ -24,10 +22,22 @@ class AppController:
             on_success=self.on_login_success,
             on_logout=self.on_logout_success
         )
+
+        self.spotify_service = SpotifyService(
+            auth_service=self.auth_service
+        )
+
         self.spotify_controller = SpotifyController(
             view=window,
             spotify_service=self.spotify_service
             )
+        
+        self.download_service = DownloadService()
+
+        self.download_controller = DownloadController(
+            view=window,
+            download_service=self.download_service
+        )
 
         # Try to restore session
         self.auth_service.restore_session()
@@ -50,8 +60,6 @@ class AppController:
         self.window.login_action.triggered.connect(self.auth_controller.login)
         #Logout action
         self.window.logout_action.triggered.connect(self.auth_controller.logout)
-        # Profile
-        self.window.profile_action.triggered.connect(self.spotify_controller.print_tracks)
 
         ## Spotify menu
         # Playlists action
@@ -61,6 +69,8 @@ class AppController:
         self.window.liked_action.triggered.connect(self.spotify_controller.load_my_liked_tracks)
 
         ## Download menu
+        # Download selected action
+        self.window.download_selceted_action.triggered.connect(self.download_controller.download_selected)
 
         ## Help menu
         # Github action

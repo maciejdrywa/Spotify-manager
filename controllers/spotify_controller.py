@@ -8,11 +8,6 @@ class SpotifyController(BaseWorkerController):
 
         self.view = view
         self.spotify_service = spotify_service
-
-
-    def print_tracks(self):
-        print(self.view.tracks_table.get_checked_rows())
-        
         
     # Download playlist
     def load_my_playlists(self):

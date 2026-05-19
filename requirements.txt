@@ -2,3 +2,4 @@ PyQt6
 python-dotenv
 requests
 keyring
+yt-dlp[default]
