@@ -42,11 +42,25 @@ class DownloadService:
 
         return ydl_opts
 
+    def _build_urls(self, tracks):
+        urls = []
+
+        for track in tracks:
+            title = track.get("title")
+            artist = track.get("artist")
+
+            url = f"ytsearch1:{title} {artist}"
+            urls.append(url)
+
+        return urls
 
 
-    def download_tracks(self):
+    def download_tracks(self, tracks):
         yt_opts = self._build_yt_opts()
 
+        build_urls = self._build_urls(tracks)
+        print(build_urls)
+
         with YoutubeDL(yt_opts) as ydl:
-            ydl.download(self.URL)
+            ydl.download(build_urls)
 

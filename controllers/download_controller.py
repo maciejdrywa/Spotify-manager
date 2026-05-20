@@ -14,5 +14,4 @@ class DownloadController(BaseWorkerController):
         if len(selected_tracks_data) <= 0:
             return
 
-        self.download_service.download_tracks()
-        print(selected_tracks_data)
+        self.download_service.download_tracks(selected_tracks_data)
