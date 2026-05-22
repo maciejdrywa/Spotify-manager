@@ -11,8 +11,8 @@ from ui.components.tracks_table import TracksTable
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Spotify downloader")
-        self.setWindowIcon(QIcon("assets/app_icon.png"))
+        self.setWindowTitle("Spotify manager")
+        self.setWindowIcon(QIcon("assets/icons/app_icon.png"))
         self.setMinimumSize(1000, 500)
 
         # Create menu bar
