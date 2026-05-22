@@ -49,56 +49,85 @@ class SpotifyService:
 
 
     def get_user_playlists(self):
-        data = self._get_api("/me/playlists")
+        limit = 50
+        offset = 0
 
         playlists = []
-        
 
-        items = data.get("items", [])
+        while (True):
+            data = self._get_api(f"/me/playlists?limit={limit}&offset={offset}")
 
-        for item in items:
-            id = item.get("id", "")
-            name = item.get("name", "")
-            owner = item.get("owner", {}).get("display_name", "")
-            tracks = self.get_playlist_tracks(id)
+            if data is None:
+                break
 
-            playlist = {
-                "id": id,
-                "name": name,
-                "owner": owner,
-                "tracks": tracks
-            }
+            items = data.get("items", [])
 
-            playlists.append(playlist)
+            for item in items:
+                id = item.get("id", "")
+                name = item.get("name", "")
+                owner = item.get("owner", {}).get("display_name", "")
+                tracks = self.get_playlist_tracks(id)
+
+                playlist = {
+                    "id": id,
+                    "name": name,
+                    "owner": owner,
+                    "tracks": tracks
+                }
+
+                playlists.append(playlist)
+
+            if data.get("next") is None:
+                break
+
+            offset += limit
+
 
         return playlists
     
 
     def get_playlist_tracks(self, playlist_id):
-        data = self._get_api(f"/playlists/{playlist_id}/items")
+        limit = 50
+        offset = 0
 
         tracks = []
 
-        items = data.get("items", [])
+        while True:
+            data = self._get_api(f"/playlists/{playlist_id}/items?limit={limit}&offset={offset}")
 
-        for item in items:
-            id = item.get("item", {}).get("id", "")
-            title = item.get("item", {}).get("name", "")
+            if data is None:
+                break
 
-            artists = item.get("item", {}).get("artists", [])
-            artist = self._convert_artists(artists)
+            items = data.get("items", [])
 
-            duration_ms = int(item.get("item", {}).get("duration_ms", 0))
-            duration = self._convert_duration(duration_ms)
+            for item in items:
+                track_data = item.get("item", None)
 
-            track = {
-                "id": id,
-                "title": title,
-                "artist": artist,
-                "duration": duration
-            }
+                if track_data is None:
+                    continue
 
-            tracks.append(track)
+                id = track_data.get("id", "")
+                title = track_data.get("name", "")
+
+                artists = track_data.get("artists", [])
+                artist = self._convert_artists(artists)
+
+                duration_ms = int(track_data.get("duration_ms", 0))
+                duration = self._convert_duration(duration_ms)
+
+                track = {
+                    "id": id,
+                    "title": title,
+                    "artist": artist,
+                    "duration": duration
+                }
+
+                tracks.append(track)
+
+            if data.get("next") is None:
+                break
+            
+            offset += limit
 
         return tracks
     
@@ -111,13 +140,19 @@ class SpotifyService:
         while True:
             data = self._get_api(f"me/tracks?limit={limit}&offset={offset}")
 
+            if data is None:
+                break
+
             items = data.get("items", [])
 
             if not items:
                 break
 
             for item in items:
-                track_data = item.get("track", {})
+                track_data = item.get("track", None)
+
+                if track_data is None:
+                    continue
 
                 id = track_data.get("id", "")
                 title = track_data.get("name", "")
