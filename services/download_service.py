@@ -1,4 +1,5 @@
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 from pathlib import Path
 
 
@@ -56,11 +57,22 @@ class DownloadService:
 
 
     def download_tracks(self, tracks):
-        yt_opts = self._build_yt_opts()
+        try:
+            yt_opts = self._build_yt_opts()
+            urls = self._build_urls(tracks)
 
-        build_urls = self._build_urls(tracks)
-        print(build_urls)
+            if not urls:
+                raise ValueError("No tracks to download")
 
-        with YoutubeDL(yt_opts) as ydl:
-            ydl.download(build_urls)
+            with YoutubeDL(yt_opts) as ydl:
+                ydl.download(urls)
+
+        except DownloadError as e:
+            raise RuntimeError(f"YtDlp downloading error: {e}")
+
+        except FileNotFoundError as e:
+            raise RuntimeError(f"Dont find file: {e}")
+
+        except Exception as e:
+            raise RuntimeError(f"downloading error: {e}")
 
