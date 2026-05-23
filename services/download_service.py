@@ -8,14 +8,7 @@ class DownloadService:
 
     def __init__(self, settings):
         self.settings = settings
-
-
-    def _has_local_ffmpeg(self):
-        ffmpeg_location = self.settings.get("ffmpeg_location", "ffmpeg/bin")
-        ffmpeg_path = Path(ffmpeg_location) / "ffmpeg.exe"
-
-        return ffmpeg_path.exists()
-        
+        self.yt_opts = self._build_yt_opts()
 
     def _build_yt_opts(self):
         ydl_opts = {
@@ -23,7 +16,7 @@ class DownloadService:
             "outtmpl": f"{self.settings.get('download_path', 'downloads')}/%(title)s.%(ext)s",
             "noplaylist": True,
             "sleep_interval": self.settings.get("sleep_interval", 5),
-            "max_sleep_interval": self.settings.get("max_sleep_interval", 15)
+            "max_sleep_interval": self.settings.get("max_sleep_interval", 10)
         }
 
         if self._has_local_ffmpeg():
@@ -42,30 +35,30 @@ class DownloadService:
             ydl_opts["cookiesfrombrowser"] = (cookies_browser,)
 
         return ydl_opts
+    
+    def _has_local_ffmpeg(self):
+        ffmpeg_location = self.settings.get("ffmpeg_location", "ffmpeg/bin")
+        ffmpeg_path = Path(ffmpeg_location) / "ffmpeg.exe"
 
-    def _build_urls(self, tracks):
-        urls = []
+        return ffmpeg_path.exists()
 
-        for track in tracks:
-            title = track.get("title")
-            artist = track.get("artist")
+    def _build_url(self, track):
+        title = track.get("title")
+        artist = track.get("artist")
+        url = f"ytsearch1:{title} {artist}"
 
-            url = f"ytsearch1:{title} {artist}"
-            urls.append(url)
-
-        return urls
+        return url
 
 
-    def download_tracks(self, tracks):
+    def download_track(self, track):
         try:
-            yt_opts = self._build_yt_opts()
-            urls = self._build_urls(tracks)
+            url = self._build_url(track)
 
-            if not urls:
+            if not url:
                 raise ValueError("No tracks to download")
 
-            with YoutubeDL(yt_opts) as ydl:
-                ydl.download(urls)
+            with YoutubeDL(self.yt_opts) as ydl:
+                ydl.download([url])
 
         except DownloadError as e:
             raise RuntimeError(f"YtDlp downloading error: {e}")

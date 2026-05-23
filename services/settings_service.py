@@ -14,7 +14,7 @@ class SettingsService:
             "cookies_browser": "chrome",
             "ffmpeg_location": "ffmpeg/bin",
             "sleep_interval": 5,
-            "max_sleep_interval": 15
+            "max_sleep_interval": 10
         }
 
     def load(self):
