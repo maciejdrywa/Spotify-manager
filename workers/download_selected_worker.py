@@ -1,4 +1,5 @@
 from PyQt6.QtCore import QObject, pyqtSignal
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class DownloadSelectedWorker(QObject):
@@ -17,13 +18,25 @@ class DownloadSelectedWorker(QObject):
         try:
             total = len(self.tracks)
 
-            for index, track in enumerate(self.tracks, start=1):
-                self.status.emit(f"Downloading {index} of {total}: {track['title']}")
+            if total <= 0:
+                self.finished.emit()
+                return
 
-                self.download_service.download_track(track)
+            completed = 0
 
-                percent = int(index * 100 / total)
-                self.progress.emit(percent)
+            with ThreadPoolExecutor(max_workers=5) as exe:
+                futures = []
+
+                for track in self.tracks:
+                    future = exe.submit(self.download_service.download_track, track)
+                    futures.append(future)
+
+                for future in as_completed(futures):
+                    completed += 1
+                    percent = int(completed * 100 / total)
+                    self.progress.emit(percent)
+                    self.status.emit(f"Downloaded {completed} of {total}")
+                    
                 
             self.finished.emit()
         except Exception as e:
