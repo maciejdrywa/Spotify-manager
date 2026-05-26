@@ -1,7 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTreeWidget, QTreeWidgetItem
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 
 class TracksTable(QWidget):
+    progress = pyqtSignal(int)
+    status = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
 
@@ -20,6 +23,7 @@ class TracksTable(QWidget):
 
     def show_playlists(self, playlists):
         self.tree.clear()
+        total = len(playlists)
 
         for playlist in playlists:
             playlist_item = QTreeWidgetItem(self.tree)
@@ -46,8 +50,13 @@ class TracksTable(QWidget):
                     "playlist": playlist["name"]
                 })
 
+        self.progress.emit(100)
+        self.status.emit(f"Loaded {total} playlists")
+
     def show_liked_tracks(self, tracks):
         self.tree.clear()
+        total = len(tracks)
+        completed = 0
 
         for track in tracks:
             playlist_item = QTreeWidgetItem(self.tree)
@@ -62,8 +71,11 @@ class TracksTable(QWidget):
                 "artist": track["artist"],
                 "duration": track["duration"]
             })
+            
 
         self.tree.expandAll()
+        self.progress.emit(100)
+        self.status.emit(f"Loaded {total} tracks")
 
 
     def get_checked_rows(self):
