@@ -8,6 +8,8 @@ class ProgressDialog(QDialog):
 
         self.setWindowTitle("Downloading")
         self.setModal(True)
+        self.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
+
         self.setFixedSize(300, 100)
 
         self.layout = QVBoxLayout()
